@@ -9,7 +9,10 @@ exports.getTopics = (req, res) => {
 exports.getEndpoints = (req, res) => {
     selectEndpoints()
     .then((endpoints) => {
-        console.log(endpoints, "<-- controller endpoints")
         res.status(200).send({endpoints})
     })
+}
+
+exports.badPath = (req, res) => {
+    res.status(404).send({msg: "endpoint does not exist"})
 }

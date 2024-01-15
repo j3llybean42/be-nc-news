@@ -27,6 +27,14 @@ describe("GET /api/topics", () => {
           });
        });
     });
+    test("404 - responds with error if invalid endpoint used", () => {
+        return request(app)
+        .get("/cheese")
+        .expect(404)
+        .then(({body}) => {
+            expect(body.msg).toBe("endpoint does not exist")
+        })
+    })
 })
 
 describe("GET /api", () => {
