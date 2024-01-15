@@ -32,7 +32,7 @@ describe("GET /api/topics", () => {
         .get("/cheese")
         .expect(404)
         .then(({body}) => {
-            expect(body.msg).toBe("endpoint does not exist")
+            expect(body.msg).toBe("Endpoint does not exist")
         })
     })
 })
@@ -63,4 +63,39 @@ describe("GET /api", () => {
             expect(endpoints).toEqual(endpointsFile)
         })
     })
+})
+describe("GET /api/articles/:article_id", () => {
+    test("200 - responds with article object with correct properties", () => {
+      return request(app)
+        .get("/api/articles/1")
+        .expect(200)
+        .then(({ body }) => {
+          const { article } = body
+          expect(article.article_id).toBe(1)
+          expect(article.hasOwnProperty("author")).toBe(true)
+          expect(article.hasOwnProperty("title")).toBe(true)
+          expect(article.hasOwnProperty("article_id")).toBe(true)
+          expect(article.hasOwnProperty("body")).toBe(true)
+          expect(article.hasOwnProperty("topic")).toBe(true)
+          expect(article.hasOwnProperty("created_at")).toBe(true)
+          expect(article.hasOwnProperty("votes")).toBe(true)
+          expect(article.hasOwnProperty("article_img_url")).toBe(true)
+       });
+    });
+    test("400 - responds with error message when passed bad article id", () => {
+        return request(app)
+          .get("/api/articles/one")
+          .expect(400)
+          .then(({body}) => {
+            expect(body.msg).toBe("Bad request")
+        })
+      });
+      test("404 - responds with error message when passed valid article_id that doesn't exist", () => {
+        return request(app)
+          .get("/api/articles/52")
+          .expect(404)
+          .then(({body}) => {
+            expect(body.msg).toBe("Article not found")
+        })
+      });
 })
