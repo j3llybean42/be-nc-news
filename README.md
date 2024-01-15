@@ -1,3 +1,4 @@
 # Northcoders News API
 
-For instructions, please head over to [L2C NC News](https://l2c.northcoders.com/courses/be/nc-news).
+In order to use this repo and connect to the dev and test databases locally, create a .env file for each.
+In these .env files, create the environment variables for PGDATABASE
