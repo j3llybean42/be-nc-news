@@ -12,8 +12,8 @@ exports.selectEndpoints = () => {
     })
 }
 
-exports.findArticleById = (article_id) => {
-    return db.query(`SELECT * FROM articles WHERE article_id = ${article_id}`).then((result) => {
+exports.findArticleById = (article_id) => {    
+    return db.query(`SELECT * FROM articles WHERE article_id = $1`, [article_id]).then((result) => {
         const article = result.rows[0]
         if(!article){
             return Promise.reject({
