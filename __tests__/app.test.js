@@ -71,6 +71,7 @@ describe("GET /api/articles/:article_id", () => {
         .expect(200)
         .then(({ body }) => {
           const { article } = body
+          console.log(article)
           expect(article.article_id).toBe(1)
           expect(article.hasOwnProperty("author")).toBe(true)
           expect(article.hasOwnProperty("title")).toBe(true)

@@ -18,7 +18,6 @@ app.use((err, req, res, next) => {
 })
 
 app.use((err, req, res, next) => {
-    console.log(err)
     if(err.msg === "Article not found"){
         res.status(404).send({msg: "Article not found"})
     }
