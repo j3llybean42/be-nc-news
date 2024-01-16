@@ -71,7 +71,6 @@ describe("GET /api/articles/:article_id", () => {
         .expect(200)
         .then(({ body }) => {
           const { article } = body
-          console.log(article)
           expect(article.article_id).toBe(1)
           expect(article.hasOwnProperty("author")).toBe(true)
           expect(article.hasOwnProperty("title")).toBe(true)
@@ -99,4 +98,27 @@ describe("GET /api/articles/:article_id", () => {
             expect(body.msg).toBe("Article not found")
         })
       });
+})
+describe("GET /api/articles", () => {
+  test("200 - responds with array of article objects that have correct keys sorted by date descending", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toBeSortedBy("created_at", { descending: true })
+        expect(Array.isArray(articles)).toBe(true);
+        articles.forEach((article) => {
+          expect(article.hasOwnProperty("author")).toBe(true);
+          expect(article.hasOwnProperty("title")).toBe(true);
+          expect(article.hasOwnProperty("article_id")).toBe(true);
+          expect(article.hasOwnProperty("topic")).toBe(true);
+          expect(article.hasOwnProperty("created_at")).toBe(true);
+          expect(article.hasOwnProperty("votes")).toBe(true);
+          expect(article.hasOwnProperty("article_img_url")).toBe(true);
+          expect(article.hasOwnProperty("comment_count")).toBe(true);
+          expect(article.hasOwnProperty("body")).toBe(false);
+        });
+     });
+  });
 })
