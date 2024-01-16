@@ -1,5 +1,5 @@
 const express = require("express")
-const { getTopics, getEndpoints, badPath, getArticleById, getArticles } = require("./app-controllers")
+const { getTopics, getEndpoints, badPath, getArticleById, getArticles, getCommentsForArticle } = require("./app-controllers")
 
 const app = express()
 
@@ -13,6 +13,8 @@ app.get("/api/articles/:article_id", getArticleById)
 
 app.get("/api/articles", getArticles)
 
+app.get("/api/articles/:article_id/comments", getCommentsForArticle)
+
 app.use((err, req, res, next) => {    
     if(err.code){
         res.status(400).send({msg: "Bad request"})
@@ -24,6 +26,12 @@ app.use((err, req, res, next) => {
         res.status(err.status).send({msg: err.msg})
     }else next(err)
 })
+
+// app.use((err, req, res, next) => {
+//     if(err){
+//         console.log(err)
+//     }
+// })
 
 app.all("/*", badPath)
 

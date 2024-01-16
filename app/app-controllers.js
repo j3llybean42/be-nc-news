@@ -1,4 +1,5 @@
-const { selectTopics, selectEndpoints, findArticleById, selectArticles } = require("./app-models")
+const { checkArticleExists } = require("./app-existence-checks")
+const { selectTopics, selectEndpoints, findArticleById, selectArticles, fetchComments } = require("./app-models")
 
 
 exports.getTopics = (req, res, next) => {
@@ -29,5 +30,18 @@ exports.getArticleById = (req, res, next) => {
 exports.getArticles = (req, res, next) => {
     selectArticles()
     .then((articles) => res.status(200).send({articles}))
+    .catch(next)
+}
+
+exports.getCommentsForArticle = (req, res, next) => {
+    const article_id = req.params.article_id
+    const fetchCommentsQuery = fetchComments(article_id)
+    const articleExistsQuery = checkArticleExists(article_id)
+
+    Promise.all([fetchCommentsQuery, articleExistsQuery])
+    .then((results) => {
+        const comments = results[0]
+        res.status(200).send({comments})
+    })
     .catch(next)
 }
