@@ -32,11 +32,12 @@ app.use((err, req, res, next) => {
   } else next(err);
 });
 
-app.use((err, req, res, next) => {
-    if(err){
-        console.log(err)
-    }
-})
+//ignore this, it's only here while I'm working in case of mystery errors
+// app.use((err, req, res, next) => {
+//     if(err){
+//         console.log(err)
+//     }
+// })
 
 app.all("/*", badPath);
 

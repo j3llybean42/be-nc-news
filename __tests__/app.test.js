@@ -211,5 +211,13 @@ describe("POST /api/articles/:article_id/comments", () => {
         expect(body.msg).toBe("Cannot post empty comment");
       });
   });
-  
+  test("404 - sends error if user does not exist", () => {
+    return request(app)
+      .post("/api/articles/5/comments")
+      .send({ username: "steve", body: "I like this article" })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("User not found");
+      })
+  })
 })
