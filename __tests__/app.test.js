@@ -221,3 +221,63 @@ describe("POST /api/articles/:article_id/comments", () => {
       })
   })
 })
+describe("PATCH /api/articles/:article_id", () => {
+  test("updates article votes and sends updated article object", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send({inc_votes: 3})
+      .expect(200)
+      .then(({ body }) => {
+        const { article } = body;
+        expect(typeof article).toBe("object")
+        expect(article.votes).toBe(103)       
+      });
+  });
+  test("400 - returns error if given invalid votes (i.e. not a number)", () => {
+    return request(app)
+    .patch("/api/articles/1")
+    .send({inc_votes: "cheese"})
+    .expect(400)
+    .then(({body}) => {
+      expect(body.msg).toBe("Votes number not given")
+    })
+  })
+  test("400 - returns an error if invalid article_id used", () => {
+    return request(app)
+    .patch("/api/articles/hashbrowns")
+    .send({inc_votes: 3})
+    .expect(400)
+    .then(({body}) => {
+      expect(body.msg).toBe("Bad request");
+    })
+  })
+  test("404 - sends error if valid article_id used but article does not exist", () => {
+    return request(app)
+    .get("/api/articles/457439")
+    .send({inc_votes: 3})
+    .expect(404)
+    .then(({body}) => {
+      expect(body.msg).toBe("Article not found");
+    })
+  })
+  test("200 - sends updated article object with correct vote count when given a negative number", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send({inc_votes: -53})
+      .expect(200)
+      .then(({ body }) => {
+        const { article } = body;
+        expect(typeof article).toBe("object")
+        expect(article.votes).toBe(47)       
+      });
+  })
+  test("400 - sends error if inc_votes is missing", () => {
+    return request(app)
+    .patch("/api/articles/1")
+    .send({})
+    .expect(400)
+    .then(({body}) => {
+      expect(body.msg).toBe("Votes number not given")
+    })
+  })
+})
