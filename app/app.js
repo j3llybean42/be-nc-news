@@ -1,7 +1,7 @@
 const express = require("express");
 const { getEndpoints, badPath } = require("./controllers/app.controllers");
 const { getTopics } = require("./controllers/topics.controllers");
-const { getArticleById, getArticles } = require("./controllers/articles.controllers");
+const { getArticleById, getArticles, patchArticleId } = require("./controllers/articles.controllers");
 const { getCommentsForArticle, postCommentById } = require("./controllers/comments.controllers");
 
 const app = express();
@@ -20,6 +20,8 @@ app.get("/api/articles/:article_id/comments", getCommentsForArticle);
 
 app.post("/api/articles/:article_id/comments", postCommentById);
 
+app.patch("/api/articles/:article_id", patchArticleId)
+
 app.use((err, req, res, next) => {
   if (err.code) {
     res.status(400).send({ msg: "Bad request" });
@@ -33,11 +35,11 @@ app.use((err, req, res, next) => {
 });
 
 //ignore this, it's only here while I'm working in case of mystery errors
-// app.use((err, req, res, next) => {
-//     if(err){
-//         console.log(err)
-//     }
-// })
+app.use((err, req, res, next) => {
+    if(err){
+        console.log(err)
+    }
+})
 
 app.all("/*", badPath);
 
