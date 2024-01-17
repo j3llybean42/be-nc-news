@@ -130,6 +130,7 @@ describe("GET /api/articles/:article_id/comments", () => {
       .then(({ body }) => {
         const { comments } = body;
         expect(Array.isArray(comments)).toBe(true);
+        expect(comments.length).not.toBe(0)
         expect(comments).toBeSortedBy("created_at")
         comments.forEach((comment) => {
           expect(comment.hasOwnProperty("comment_id")).toBe(true);
@@ -168,3 +169,55 @@ describe("GET /api/articles/:article_id/comments", () => {
     })
   })
 });
+describe("POST /api/articles/:article_id/comments", () => {
+  test("201 - adds a comment for an article and sends the comment as an object", () => {
+    return request(app)
+    .post("/api/articles/3/comments")
+    .send({ username: "icellusedkars", body: "I like this article" })
+    .expect(201)
+    .then(({body}) => {
+      const comment = body
+      expect(typeof comment.comment_id).toBe("number")
+      expect(comment.author).toBe("icellusedkars")
+      expect(comment.body).toBe("I like this article")
+      expect(comment.hasOwnProperty("created_at")).toBe(true)
+      expect(comment.votes).toBe(0)
+      expect(comment.article_id).toBe(3)
+    })
+  })
+  test("400 - returns an error if invalid article_id used", () => {
+    return request(app)
+    .post("/api/articles/chickens/comments")
+    .send({ username: "icellusedkars", body: "I like this article" })
+    .expect(400)
+    .then(({body}) => {
+      expect(body.msg).toBe("Bad request");
+    })
+  })
+  test("404 - sends error if valid article_id used but article does not exist", () => {
+    return request(app)
+    .get("/api/articles/457439/comments")
+    .expect(404)
+    .then(({body}) => {
+      expect(body.msg).toBe("Article not found");
+    })
+  })
+  test("400 - sends error if the comment body is empty", () => {
+    return request(app)
+      .post("/api/articles/5/comments")
+      .send({ username: "icellusedkars", body: "" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Cannot post empty comment");
+      });
+  });
+  test("404 - sends error if user does not exist", () => {
+    return request(app)
+      .post("/api/articles/5/comments")
+      .send({ username: "steve", body: "I like this article" })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("User not found");
+      })
+  })
+})
