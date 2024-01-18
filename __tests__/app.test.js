@@ -281,3 +281,29 @@ describe("PATCH /api/articles/:article_id", () => {
     })
   })
 })
+describe("DELETE /api/comments/:comment_id", () => {
+  test("204 - deletes comment with given comment_id", () => {
+    return request(app)
+    .delete("/api/comments/1")
+    .expect(204)
+    .then(({body}) => {
+      expect(body).toEqual({})
+    })
+  })
+  test("400 - sends error if invalid id used", () => {
+    return request(app)
+    .delete("/api/comments/cheeseburger")
+    .expect(400)
+    .then(({body}) => {
+      expect(body.msg).toBe("Bad request")
+    })
+  })
+  test("404 - sends error if comment id is valid but does not exist", () => {
+    return request(app)
+    .delete("/api/comments/387465")
+    .expect(404)
+    .then(({body}) => {
+      expect(body.msg).toBe("Comment not found")
+    })
+  })
+})
