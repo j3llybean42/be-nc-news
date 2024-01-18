@@ -335,6 +335,14 @@ describe("GET /api/articles?topicquery", () => {
         expect(articles.length).toBe(1);
         articles.forEach((article) => {
           expect(article.topic).toBe("cats");
+          expect(article.hasOwnProperty("article_id")).toBe(true)
+          expect(article.hasOwnProperty("author")).toBe(true);
+          expect(article.hasOwnProperty("title")).toBe(true);
+          expect(article.hasOwnProperty("created_at")).toBe(true);
+          expect(article.hasOwnProperty("votes")).toBe(true);
+          expect(article.hasOwnProperty("article_img_url")).toBe(true);
+          expect(article.hasOwnProperty("comment_count")).toBe(true);
+          expect(article.hasOwnProperty("body")).toBe(false);
         });
       });
   });
@@ -368,4 +376,15 @@ describe("GET /api/articles/:article_id (comment_count)", () => {
       })
     })
   });
+  test("200 - returns requested article object with comment_count = 0 when article present but has no comments", () => {
+    return request(app)
+    .get("/api/articles/2")
+    .expect(200)
+    .then(({body}) => {
+      const {article} = body
+      expect(article).toMatchObject({
+        comment_count: 0
+      })
+    })
+  })
 });
