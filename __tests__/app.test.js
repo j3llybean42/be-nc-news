@@ -335,6 +335,14 @@ describe("GET /api/articles?topicquery", () => {
         expect(articles.length).toBe(1);
         articles.forEach((article) => {
           expect(article.topic).toBe("cats");
+          expect(article.hasOwnProperty("article_id")).toBe(true)
+          expect(article.hasOwnProperty("author")).toBe(true);
+          expect(article.hasOwnProperty("title")).toBe(true);
+          expect(article.hasOwnProperty("created_at")).toBe(true);
+          expect(article.hasOwnProperty("votes")).toBe(true);
+          expect(article.hasOwnProperty("article_img_url")).toBe(true);
+          expect(article.hasOwnProperty("comment_count")).toBe(true);
+          expect(article.hasOwnProperty("body")).toBe(false);
         });
       });
   });
