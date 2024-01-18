@@ -3,6 +3,7 @@ const { getEndpoints, badPath } = require("./controllers/app.controllers");
 const { getTopics } = require("./controllers/topics.controllers");
 const { getArticleById, getArticles, patchArticleId } = require("./controllers/articles.controllers");
 const { getCommentsForArticle, postCommentById, deleteCommentById } = require("./controllers/comments.controllers");
+const { getUsers } = require("./controllers/users.controllers");
 
 const app = express();
 
@@ -23,6 +24,8 @@ app.post("/api/articles/:article_id/comments", postCommentById);
 app.patch("/api/articles/:article_id", patchArticleId)
 
 app.delete("/api/comments/:comment_id", deleteCommentById)
+
+app.get("/api/users", getUsers)
 
 app.use((err, req, res, next) => {
   if (err.code) {

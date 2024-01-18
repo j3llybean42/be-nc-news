@@ -21,6 +21,7 @@ describe("GET /api/topics", () => {
       .then(({ body }) => {
         const { topics } = body;
         expect(Array.isArray(topics)).toBe(true);
+        expect(topics.length).not.toBe(0)
         topics.forEach((topic) => {
           expect(topic.hasOwnProperty("slug")).toBe(true);
           expect(topic.hasOwnProperty("description")).toBe(true);
@@ -304,6 +305,23 @@ describe("DELETE /api/comments/:comment_id", () => {
     .expect(404)
     .then(({body}) => {
       expect(body.msg).toBe("Comment not found")
+    })
+  })
+})
+describe("GET /api/users", () => {
+  test("200 - sends array of user objects", () => {
+    return request(app)
+    .get("/api/users")
+    .expect(200)
+    .then(({body}) => {
+      const {users} = body
+      expect(Array.isArray(users)).toBe(true);
+      expect(users.length).not.toBe(0)
+      users.forEach((user) => {
+        expect(user.hasOwnProperty("username")).toBe(true);
+        expect(user.hasOwnProperty("name")).toBe(true);
+        expect(user.hasOwnProperty("avatar_url")).toBe(true)
+      })
     })
   })
 })
