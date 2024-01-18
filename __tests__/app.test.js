@@ -368,4 +368,15 @@ describe("GET /api/articles/:article_id (comment_count)", () => {
       })
     })
   });
+  test("200 - returns requested article object with comment_count = 0 when article present but has no comments", () => {
+    return request(app)
+    .get("/api/articles/2")
+    .expect(200)
+    .then(({body}) => {
+      const {article} = body
+      expect(article).toMatchObject({
+        comment_count: 0
+      })
+    })
+  })
 });
