@@ -1,5 +1,6 @@
 const db = require("../../db/connection");
 const fs = require("fs/promises");
+const { checkTopicExists } = require("../app-existence-checks");
 
 exports.findArticleById = (article_id) => {
   return db
@@ -16,29 +17,37 @@ exports.findArticleById = (article_id) => {
     });
 };
 
-exports.selectArticles = () => {
-  return db
-    .query(
-      `
-      SELECT articles.article_id, articles.author, title, topic, articles.created_at, articles.votes, article_img_url,
-      COUNT(comment_id)::INT AS comment_count
-      FROM articles
-      JOIN comments ON articles.article_id = comments.article_id
-      GROUP BY articles.article_id
-      ORDER BY created_at DESC
-      `
-    )
-    .then((result) => result.rows);
+exports.selectArticles = (topic) => {
+  let sqlQuery = `
+  SELECT articles.article_id, articles.author, title, topic, articles.created_at, articles.votes, article_img_url,
+  COUNT(comment_id)::INT AS comment_count
+  FROM articles
+  JOIN comments ON articles.article_id = comments.article_id`;
+  const queryParams = [];
+
+  if (topic) {
+    sqlQuery += ` WHERE topic = $1`;
+    queryParams.push(topic);
+  }
+
+  sqlQuery += ` GROUP BY articles.article_id
+  ORDER BY created_at DESC
+  `;
+  return db.query(sqlQuery, queryParams).then((result) => result.rows);
 };
 
 exports.updateArticle = (article_id, inc_votes) => {
-  let queryParams = [article_id, inc_votes]
-  if(typeof inc_votes !== "number"){
-    return Promise.reject({status: 400, msg: "Votes number not given"})
+  let queryParams = [article_id, inc_votes];
+  if (typeof inc_votes !== "number") {
+    return Promise.reject({ status: 400, msg: "Votes number not given" });
   }
-  return db.query(`UPDATE articles
+  return db
+    .query(
+      `UPDATE articles
   SET votes = votes + $2
   WHERE article_id = $1
-  RETURNING *`, queryParams)
-  .then((result) => result.rows[0])
-}
+  RETURNING *`,
+      queryParams
+    )
+    .then((result) => result.rows[0]);
+};
