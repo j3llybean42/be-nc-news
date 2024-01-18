@@ -325,3 +325,34 @@ describe("GET /api/users", () => {
     })
   })
 })
+describe("GET /api/articles?topicquery", () => {
+  test("200 - sends array of article objects with requested topic", () => {
+    return request(app)
+    .get("/api/articles?topic=cats")
+    .expect(200)
+    .then(({body}) => {
+      const {articles} = body
+      expect(articles.length).toBe(1)
+      articles.forEach((article) => {
+        expect(article.topic).toBe("cats")
+      })
+    })
+  })
+  test("404 - sends error if topic doesn't exist", () => {
+    return request(app)
+    .get("/api/articles?topic=meatballs")
+    .expect(404)
+    .then(({body}) => {
+      expect(body.msg).toBe("Topic not found")
+    })
+  })
+  test("200 - sends empty array if topic exists but no matching articles present", () => {
+    return request(app)
+    .get("/api/articles?topic=paper")
+    .expect(200)
+    .then(({body}) => {
+      const {articles} = body
+      expect(articles).toEqual([])
+    })
+  })
+})
