@@ -335,7 +335,7 @@ describe("GET /api/articles?topicquery", () => {
         expect(articles.length).toBe(1);
         articles.forEach((article) => {
           expect(article.topic).toBe("cats");
-          expect(article.hasOwnProperty("article_id")).toBe(true)
+          expect(article.hasOwnProperty("article_id")).toBe(true);
           expect(article.hasOwnProperty("author")).toBe(true);
           expect(article.hasOwnProperty("title")).toBe(true);
           expect(article.hasOwnProperty("created_at")).toBe(true);
@@ -367,24 +367,77 @@ describe("GET /api/articles?topicquery", () => {
 describe("GET /api/articles/:article_id (comment_count)", () => {
   test("200 - returns requested article, now with comment_count property", () => {
     return request(app)
-    .get("/api/articles/1")
-    .expect(200)
-    .then(({body}) => {
-      const {article} = body
-      expect(article).toMatchObject({
-        comment_count: 11
-      })
-    })
+      .get("/api/articles/1")
+      .expect(200)
+      .then(({ body }) => {
+        const { article } = body;
+        expect(article).toMatchObject({
+          comment_count: 11,
+        });
+      });
   });
   test("200 - returns requested article object with comment_count = 0 when article present but has no comments", () => {
     return request(app)
-    .get("/api/articles/2")
-    .expect(200)
-    .then(({body}) => {
-      const {article} = body
-      expect(article).toMatchObject({
-        comment_count: 0
-      })
-    })
-  })
+      .get("/api/articles/2")
+      .expect(200)
+      .then(({ body }) => {
+        const { article } = body;
+        expect(article).toMatchObject({
+          comment_count: 0,
+        });
+      });
+  });
+});
+describe("GET /api/articles(sorting queries)", () => {
+  test("200 - responds with array of articles sorted by given valid query", () => {
+    return request(app)
+      .get("/api/articles?sort_by=comment_count")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(Array.isArray(articles)).toBe(true);
+        expect(articles.length).not.toBe(0);
+        expect(articles).toBeSortedBy("comment_count", { descending: true });
+      });
+  });
+  test("400 - returns error if given invalid sort_by query", () => {
+    return request(app)
+      .get("/api/articles?sort_by=pickles")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid sort_by query");
+      });
+  });
+});
+describe("GET /api/articles(order queries)", () => {
+  test("200 - responds with array of articles sorted in order of given order query", () => {
+    return request(app)
+      .get("/api/articles?order=asc")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(Array.isArray(articles)).toBe(true);
+        expect(articles.length).not.toBe(0);
+        expect(articles).toBeSorted({ descending: false });
+      });
+  });
+  test("400 - returns error if given invalid order query", () => {
+    return request(app)
+      .get("/api/articles?order=chickens")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid order query");
+      });
+  });
+  test("200 - sort_by and order queries work simultaneously", () => {
+    return request(app)
+      .get("/api/articles?sort_by=comment_count&order=asc")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(Array.isArray(articles)).toBe(true);
+        expect(articles.length).not.toBe(0);
+        expect(articles).toBeSortedBy("comment_count", { descending: false });
+      });
+  });
 });

@@ -11,8 +11,8 @@ exports.getArticleById = (req, res, next) => {
 }
 
 exports.getArticles = (req, res, next) => {
-    const {topic} = req.query
-    const articlesQuery = selectArticles(topic)
+    const {topic, sort_by, order} = req.query
+    const articlesQuery = selectArticles(topic, sort_by, order)
     const queries = [articlesQuery]
     if(topic){
         const topicExists = checkTopicExists(topic)
