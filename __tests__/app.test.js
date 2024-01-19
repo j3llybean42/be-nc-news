@@ -465,3 +465,63 @@ describe("GET /api/users/:username", () => {
       });
   });
 });
+describe("PATCH /api/comments/:comment_id", () => {
+  test("updates comment votes and sends updated comment object", () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .send({ inc_votes: 7 })
+      .expect(200)
+      .then(({ body }) => {
+        const { comment } = body;
+        expect(typeof comment).toBe("object");
+        expect(comment.votes).toBe(23);
+      });
+  });
+  test("400 - returns error if given invalid votes (i.e. not a number)", () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .send({ inc_votes: "cheese" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Votes number not given");
+      });
+  });
+  test("400 - returns an error if invalid comment_id used", () => {
+    return request(app)
+      .patch("/api/comments/hashbrowns")
+      .send({ inc_votes: 3 })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
+  });
+  test("404 - sends error if valid comment_id used but comment does not exist", () => {
+    return request(app)
+      .patch("/api/comments/457434")
+      .send({ inc_votes: 3 })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Comment not found");
+      });
+  });
+  test("200 - sends updated comment object with correct vote count when given a negative number", () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .send({ inc_votes: -10 })
+      .expect(200)
+      .then(({ body }) => {
+        const { comment } = body;
+        expect(typeof comment).toBe("object");
+        expect(comment.votes).toBe(6);
+      });
+  });
+  test("400 - sends error if inc_votes is missing", () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .send({})
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Votes number not given");
+      });
+  });
+});
