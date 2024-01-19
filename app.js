@@ -1,16 +1,12 @@
 const express = require("express");
-const { getEndpoints, badPath } = require("./controllers/app.controllers");
-const { getTopics } = require("./controllers/topics.controllers");
-const { getArticleById, getArticles, patchArticleId } = require("./controllers/articles.controllers");
-const { getCommentsForArticle, postCommentById, deleteCommentById } = require("./controllers/comments.controllers");
-const { getUsers } = require("./controllers/users.controllers");
-const apiRouter = require("./routes/api-router")
+const { badPath } = require("./controllers/app.controllers");
+const apiRouter = require("./routes/api-router");
 
 const app = express();
 
 app.use(express.json());
 
-app.use("/api", apiRouter)
+app.use("/api", apiRouter);
 
 app.all("/*", badPath);
 

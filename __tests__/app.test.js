@@ -441,4 +441,27 @@ describe("GET /api/articles(order queries)", () => {
       });
   });
 });
-
+describe("GET /api/users/:username", () => {
+  test("200 - sends user object for requested username", () => {
+    return request(app)
+      .get("/api/users/butter_bridge")
+      .expect(200)
+      .then(({ body }) => {
+        const { user } = body;
+        expect(user).toEqual({
+          username: 'butter_bridge',
+          name: 'jonny',
+          avatar_url:
+            'https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg'
+        })
+      });
+  });
+  test("404 - sends error if username is valid but does not exist", () => {
+    return request(app)
+      .get("/api/users/steve")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("User not found");
+      });
+  });
+});
