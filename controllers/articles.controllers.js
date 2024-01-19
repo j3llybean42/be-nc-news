@@ -1,4 +1,4 @@
-const { checkArticleExists, checkTopicExists } = require("../app-existence-checks")
+const { checkArticleExists, checkTopicExists } = require("./app-existence-checks")
 const { findArticleById, selectArticles, updateArticle } = require("../models/articles.models")
 
 exports.getArticleById = (req, res, next) => {

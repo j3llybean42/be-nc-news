@@ -1,4 +1,4 @@
-const { checkArticleExists, checkUserExists, checkCommentExists } = require("../app-existence-checks");
+const { checkArticleExists, checkUserExists, checkCommentExists } = require("./app-existence-checks");
 const { fetchComments, addCommentById, removeCommentById } = require("../models/comments.models");
 
 exports.getCommentsForArticle = (req, res, next) => {

@@ -1,6 +1,6 @@
 const db = require("../db/connection");
 const fs = require("fs/promises");
-const { checkTopicExists } = require("../app-existence-checks");
+const { checkTopicExists } = require("../controllers/app-existence-checks");
 
 exports.findArticleById = (article_id) => {
   return db
