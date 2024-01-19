@@ -449,11 +449,11 @@ describe("GET /api/users/:username", () => {
       .then(({ body }) => {
         const { user } = body;
         expect(user).toEqual({
-          username: 'butter_bridge',
-          name: 'jonny',
+          username: "butter_bridge",
+          name: "jonny",
           avatar_url:
-            'https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg'
-        })
+            "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
+        });
       });
   });
   test("404 - sends error if username is valid but does not exist", () => {
@@ -522,6 +522,100 @@ describe("PATCH /api/comments/:comment_id", () => {
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("Votes number not given");
+      });
+  });
+});
+describe("POST /api/articles", () => {
+  test("201 - sends object of posted article", () => {
+    return request(app)
+      .post("/api/articles")
+      .send({
+        author: "lurker",
+        title: "an article",
+        body: "words words words",
+        topic: "paper",
+        article_img_url:
+          "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+      })
+      .expect(201)
+      .then(({ body }) => {
+        const { article } = body;
+        console.log(article)
+        expect(article).toMatchObject({
+          article_id: 14,
+          author: "lurker",
+          title: "an article",
+          body: "words words words",
+          topic: "paper",
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+          votes: 0,
+          comment_count: 0,
+        });
+        expect(article.hasOwnProperty("created_at")).toBe(true);
+      });
+  });
+  test("404 - sends error if topic doesn't exist", () => {
+    return request(app)
+      .post("/api/articles")
+      .send({
+        author: "lurker",
+        title: "an article",
+        body: "words words words",
+        topic: "cheese",
+        article_img_url:
+          "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+      })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Topic not found");
+      });
+  });
+  test("404 - sends error if user doesn't exist", () => {
+    return request(app)
+      .post("/api/articles")
+      .send({
+        author: "steve",
+        title: "an article",
+        body: "words words words",
+        topic: "paper",
+        article_img_url:
+          "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+      })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("User not found");
+      });
+  });
+  test("400 - sends error if any required columns are missing from input", () => {
+    return request(app)
+      .post("/api/articles")
+      .send({
+        author: "lurker",
+        title: "an article",
+        topic: "paper",
+        article_img_url:
+          "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request - Missing required information");
+      });
+  });
+  test("400 - sends error if any required columns are empty", () => {
+    return request(app)
+      .post("/api/articles")
+      .send({
+        author: "lurker",
+        title: "",
+        body: "words words words",
+        topic: "paper",
+        article_img_url:
+          "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request - Missing required information");
       });
   });
 });

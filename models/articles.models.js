@@ -1,6 +1,7 @@
 const db = require("../db/connection");
 const fs = require("fs/promises");
 const { checkTopicExists } = require("../controllers/app-existence-checks");
+const { resourceLimits } = require("worker_threads");
 
 exports.findArticleById = (article_id) => {
   return db
@@ -18,7 +19,7 @@ exports.findArticleById = (article_id) => {
       if (!article) {
         return Promise.reject({
           status: 404,
-          msg: "Article not found"
+          msg: "Article not found",
         });
       }
       return article;
@@ -26,13 +27,13 @@ exports.findArticleById = (article_id) => {
 };
 
 exports.selectArticles = (topic, sort_by = "created_at", order = "DESC") => {
-  const validSortQueries = ["created_at", "comment_count", "votes"]
-  if(!validSortQueries.includes(sort_by)){
-    return Promise.reject({status: 400, msg: "Invalid sort_by query"})
+  const validSortQueries = ["created_at", "comment_count", "votes"];
+  if (!validSortQueries.includes(sort_by)) {
+    return Promise.reject({ status: 400, msg: "Invalid sort_by query" });
   }
-  const validOrderQueries = ["ASC", "DESC"]
-  if(!validOrderQueries.includes(order.toUpperCase())){
-    return Promise.reject({status: 400, msg: "Invalid order query"})
+  const validOrderQueries = ["ASC", "DESC"];
+  if (!validOrderQueries.includes(order.toUpperCase())) {
+    return Promise.reject({ status: 400, msg: "Invalid order query" });
   }
   let sqlQuery = `
   SELECT articles.article_id, articles.author, title, topic, articles.created_at, articles.votes, article_img_url,
@@ -66,4 +67,32 @@ exports.updateArticle = (article_id, inc_votes) => {
       queryParams
     )
     .then((result) => result.rows[0]);
+};
+
+exports.insertArticle = (newArticle) => {
+  const { author, title, body, topic, article_img_url } = newArticle;
+  if (
+    [author, title, body, topic].includes(undefined) ||
+    [author, title, body, topic].includes("")
+  ) {
+    return Promise.reject({
+      status: 400,
+      msg: "Bad Request - Missing required information",
+    });
+  }
+  return db
+    .query(
+      `
+  INSERT INTO articles
+  (author, title, body, topic, article_img_url)
+  VALUES
+  ($1, $2, $3, $4, $5)
+  RETURNING *
+  `,
+      [author, title, body, topic, article_img_url]
+    )
+    .then((result) => {
+      result.rows[0].comment_count = 0;
+      return result.rows[0];
+    });
 };
