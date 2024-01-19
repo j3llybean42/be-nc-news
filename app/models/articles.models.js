@@ -25,7 +25,15 @@ exports.findArticleById = (article_id) => {
     });
 };
 
-exports.selectArticles = (topic) => {
+exports.selectArticles = (topic, sort_by = "created_at", order = "DESC") => {
+  const validSortQueries = ["created_at", "comment_count", "votes"]
+  if(!validSortQueries.includes(sort_by)){
+    return Promise.reject({status: 400, msg: "Invalid sort_by query"})
+  }
+  const validOrderQueries = ["ASC", "DESC"]
+  if(!validOrderQueries.includes(order.toUpperCase())){
+    return Promise.reject({status: 400, msg: "Invalid order query"})
+  }
   let sqlQuery = `
   SELECT articles.article_id, articles.author, title, topic, articles.created_at, articles.votes, article_img_url,
   COUNT(comment_id)::INT AS comment_count
@@ -39,7 +47,7 @@ exports.selectArticles = (topic) => {
   }
 
   sqlQuery += ` GROUP BY articles.article_id
-  ORDER BY created_at DESC
+  ORDER BY ${sort_by} ${order}
   `;
   return db.query(sqlQuery, queryParams).then((result) => result.rows);
 };
