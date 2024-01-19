@@ -1,4 +1,4 @@
-const db = require("../../db/connection");
+const db = require("../db/connection");
 const fs = require("fs/promises");
 const { checkTopicExists } = require("../app-existence-checks");
 
