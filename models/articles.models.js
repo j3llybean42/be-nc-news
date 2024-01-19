@@ -18,7 +18,7 @@ exports.findArticleById = (article_id) => {
       if (!article) {
         return Promise.reject({
           status: 404,
-          msg: "Article not found",
+          msg: "Article not found"
         });
       }
       return article;
