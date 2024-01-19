@@ -1,5 +1,5 @@
-const { checkArticleExists, checkTopicExists } = require("./app-existence-checks")
-const { findArticleById, selectArticles, updateArticle } = require("../models/articles.models")
+const { checkArticleExists, checkTopicExists, checkUserExists } = require("./app-existence-checks")
+const { findArticleById, selectArticles, updateArticle, addArticle, insertArticle } = require("../models/articles.models")
 
 exports.getArticleById = (req, res, next) => {
     const article_id = req.params.article_id
@@ -35,6 +35,21 @@ exports.patchArticleId = (req, res, next) => {
     .then((results) => {
         const article = results[0]
         res.status(200).send({article})
+    })
+    .catch(next)
+}
+
+exports.postArticle = (req, res, next) => {
+    const newArticle = req.body
+    const user = newArticle.author
+    const topic = newArticle.topic
+    const userExists = checkUserExists(user)
+    const topicExists = checkTopicExists(topic)
+    const insertQuery = insertArticle(newArticle)
+    Promise.all([insertQuery, userExists, topicExists])
+    .then((results) => {
+        const article = results[0]
+        res.status(201).send({article})
     })
     .catch(next)
 }
