@@ -56,10 +56,6 @@ exports.selectArticles = (
   sqlQuery += ` GROUP BY articles.article_id
   ORDER BY ${sort_by} ${order}
   `;
-  // const offset = page * limit - limit;
-  // sqlQuery += ` OFFSET ${offset}`;
-
-  // sqlQuery += ` LIMIT ${limit}`;
 
   return db.query(sqlQuery, queryParams).then((results) => results.rows);
 };
