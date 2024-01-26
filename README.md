@@ -1,6 +1,6 @@
 # Northcoders News API
 
-I have created this as a back-end project while doing the Software Development Bootcamp with [Northcoders](https://northcoders.com/). The NC News API uses psql to set up a database representing a social media platform where users can post and discuss a wide variety of content covering many topics (similar to Reddit). In a few weeks' time I wil be making the front-end for this project, so keep your eyes peeled for that! The server is now live, and [hosted here!](https://nc-news-3uh0.onrender.com/api) :smile: :partying_face:
+I have created this as a back-end project while doing the Software Development Bootcamp with [Northcoders](https://northcoders.com/). The NC News API uses psql to set up a database representing a social media platform where users can post and discuss a wide variety of content covering many topics (similar to Reddit). The server is now live, and [hosted here!](https://nc-news-3uh0.onrender.com/api) :smile: :partying_face:
 
 
 ## To install:
