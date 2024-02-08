@@ -132,7 +132,7 @@ describe("GET /api/articles/:article_id/comments", () => {
         const { comments } = body;
         expect(Array.isArray(comments)).toBe(true);
         expect(comments.length).not.toBe(0);
-        expect(comments).toBeSortedBy("created_at");
+        expect(comments).toBeSortedBy("created_at", { descending: true });
         comments.forEach((comment) => {
           expect(comment.hasOwnProperty("comment_id")).toBe(true);
           expect(comment.hasOwnProperty("votes")).toBe(true);

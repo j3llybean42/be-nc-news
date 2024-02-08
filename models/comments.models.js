@@ -6,7 +6,7 @@ exports.fetchComments = (article_id) => {
     SELECT comment_id, votes, created_at, author, body, article_id
     FROM comments
     WHERE article_id = $1
-    ORDER BY created_at
+    ORDER BY created_at DESC
     `;
   const queryParams = [article_id];
   return db.query(sqlQuery, queryParams).then((result) => result.rows);
